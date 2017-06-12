@@ -1,4 +1,5 @@
 $global:ReturnsxPricerKeys = [System.Collections.ArrayList]@("")
+$template_json_file = "c:\template.json"
 
 Function global:Create-xPricer-Azure-Skeleton {
 
