@@ -1,4 +1,4 @@
-#.\xPricer.ps1 -Purge force -AzureRmResourceGroup ompsg -AzureRmStorageAccount ompsg -AzureRmBatchAccount ompsg -PoolName ompsg
+#.\xPricer.ps1 -Purge no -AzureRmResourceGroup tontonompsg -AzureRmStorageAccount tontonompsg -AzureRmBatchAccount tontonompsg -PoolName tontonompsg
 
 param(
     [String]$Purge,
@@ -37,6 +37,9 @@ $configuration = New-Object -TypeName "Microsoft.Azure.Commands.Batch.Models.PSC
 New-AzureBatchPool -Id "$PoolName" -VirtualMachineSize "Small" -CloudServiceConfiguration $configuration -AutoScaleFormula '$TargetDedicated=4;' -BatchContext $context
 Write-Host "Pool $PoolName has been created ..."
 
+$ServiceBatchURL = Get-AzureRmBatchAccount –AccountName "ompsg2"
+$BatchURL = $ServiceBatchURL.TaskTenantUrl
+
 $json = @"
 {
    
@@ -45,11 +48,11 @@ $json = @"
 
 $jobj = ConvertFrom-Json -InputObject $json    
     
-$Key = $ReturnsxPricerKeys[1]
 
 $jobj | add-member "AzureRmStorageAccount" "$AzureRmStorageAccount" -MemberType NoteProperty
 $jobj | add-member "PrivateKey" "$Key" -MemberType NoteProperty
 $jobj | add-member "AzureRmBatchAccount" "$AzureRmBatchAccount" -MemberType NoteProperty
+$jobj | add-member "ServiceBatchURL" "$BatchURL" -MemberType NoteProperty
 $jobj | add-member "PoolName" "$PoolName" -MemberType NoteProperty
    
 ConvertTo-Json $jobj | Out-File $template_json_file
