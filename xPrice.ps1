@@ -64,3 +64,19 @@ $ReturnsxPricerKeys[0]
 $ReturnsxPricerKeys[1]
 
 PoolCreation xpricerbatchaccount autoscale
+
+$json = @"
+{
+   
+}
+"@
+
+
+$jobj = ConvertFrom-Json -InputObject $json    
+    
+$Key = $ReturnsxPricerKeys[1]
+$jobj | add-member "key" "$Key" -MemberType NoteProperty
+   
+
+ConvertTo-Json $jobj | Out-File $template_json_file
+(Get-Content -path "$template_json_file" -Encoding Unicode) | Set-Content -Encoding "Default" -Path "$template_json_file"
