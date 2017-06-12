@@ -42,6 +42,16 @@ Function global:Returns-xPricer-Keys {
 
 }
 
+Function global:PoolCreation {
+
+    param([String]$AzureRmBatchAccount)
+
+    $context = Get-AzureRmBatchAccountKeys -AccountName "$AzureRmBatchAccount"
+    $configuration = New-Object -TypeName "Microsoft.Azure.Commands.Batch.Models.PSCloudServiceConfiguration" -ArgumentList @(4,"*")
+    New-AzureBatchPool -Id "AutoScalePool" -VirtualMachineSize "Small" -CloudServiceConfiguration $configuration -AutoScaleFormula '$TargetDedicated=4;' -BatchContext $context
+
+}
+
 clear;
 
 Login-AzureRmAccount 
@@ -52,3 +62,4 @@ Returns-xPricer-Keys xpricerbatchaccount
 $ReturnsxPricerKeys[0]
 $ReturnsxPricerKeys[1]
 
+PoolCreation
